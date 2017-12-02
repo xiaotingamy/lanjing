@@ -1,19 +1,59 @@
 <template>
   <div class="cartcontrol">
-    <p class="btn-minus">
+    <p class="btn-minus" @click="decreaseCount" :class="{'off': innerCount <= 1}">
       <span class="btn minus"></span>
     </p>
     <p class="btn-input">
-      <input type="tel" value="1">
+      <input type="tel" v-model="innerCount">
     </p>
-    <p class="btn-plus">
+    <p class="btn-plus" @click="increaseCount" :class="{'off': innerCount === innerStock}">
       <span class="btn plus"></span>
     </p>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
-  export default {}
+  export default {
+    props: {
+      good: {
+        type: Object,
+        default: {}
+      },
+      indexNum: {
+        type: Number,
+        require: true
+      }
+    },
+    data() {
+      return {
+        innerCount: 1,
+        innerStock: 1000
+      }
+    },
+    created() {
+      this.innerStock = this.good.stock
+      this.innerCount = this.good.count
+      if (this.innerCount > this.innerStock) {
+        this.innerCount = this.innerStock
+      }
+    },
+    methods: {
+      decreaseCount() {
+        let newValue = this.innerCount
+        if (newValue > 1) {
+          this.innerCount = newValue - 1
+        }
+        this.$emit('decrease', this.innerCount, this.indexNum)
+      },
+      increaseCount() {
+        let newValue = this.innerCount
+        if (newValue <= this.innerStock - 1) {
+          this.innerCount = newValue + 1
+        }
+        this.$emit('increase', this.innerCount, this.indexNum)
+      }
+    }
+  }
 </script>
 
 <style scoped lang="stylus" rel="stylesheet/stylus">
@@ -58,5 +98,10 @@
     .btn-plus
       width 33px
       background #f1f1f1
+      &.off
+        background #f9f9f9
+        .btn
+          &:after, &:before
+            border-color #ddd
 
 </style>
