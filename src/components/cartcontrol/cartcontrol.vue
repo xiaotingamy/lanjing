@@ -4,7 +4,7 @@
       <span class="btn minus"></span>
     </p>
     <p class="btn-input">
-      <input type="tel" v-model="innerCount">
+      <input type="tel" v-model="innerCount" @blur="blurInput">
     </p>
     <p class="btn-plus" @click="increaseCount" :class="{'off': innerCount === innerStock}">
       <span class="btn plus"></span>
@@ -43,14 +43,33 @@
         if (newValue > 1) {
           this.innerCount = newValue - 1
         }
-        this.$emit('decrease', this.innerCount, this.indexNum)
+        this.$emit('change', this.innerCount, this.indexNum)
       },
       increaseCount() {
         let newValue = this.innerCount
         if (newValue <= this.innerStock - 1) {
-          this.innerCount = newValue + 1
+          this.innerCount = Number(newValue) + 1
         }
-        this.$emit('increase', this.innerCount, this.indexNum)
+        this.$emit('change', this.innerCount, this.indexNum)
+      },
+      blurInput() {
+        if (this.innerCount === '') {
+          this.innerCount = 1
+        }
+        this.$emit('change', this.innerCount, this.indexNum)
+      }
+    },
+    watch: {
+      innerCount(newCount) {
+//        this.answer = 'Waiting for you to stop typing...'
+//        this.getAnswer()
+        if (newCount > this.innerStock) {
+          this.innerCount = this.innerStock
+        }
+        if (isNaN(newCount)) {
+          this.innerCount = 1
+        }
+        this.$emit('change', this.innerCount, this.indexNum)
       }
     }
   }

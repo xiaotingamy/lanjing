@@ -1,63 +1,78 @@
 <template>
   <div class="shopcart-wrapper">
-    <scroll ref="cartList" class="shopcart-content">
-      <div>
-        <split></split>
-        <div class="cart-group border-bottom-1px">
-          <div class="head">
-            <div class="left">
-              <checkbox v-model="allChecked" @input="checkedAllItems"></checkbox>
-              <span class="title">鲸选</span>
-            </div>
-            <div class="right">
-              <span class="operate" @click="edit">{{operateText}}</span>
-            </div>
-          </div>
-          <div class="list">
-            <checkbox-group v-model="checkboxModel">
-              <div class="item" v-for="(item, index) in cartItems" :key="item.id">
-                <checkbox :label="item.id"></checkbox>
-                <div class="content">
-                  <div class="img">
-                    <img :src="item.imgUrl">
-                  </div>
-                  <div class="text-box">
-                    <div class="name-box">
-                      <p class="name" v-show="!editable">{{item.name}}</p>
-                      <div class="cartcontrol-wrapper" v-show="editable">
-                        <cartcontrol :good="item" :indexNum="index" @increase="increaseNum" @decrease="decreaseNum"></cartcontrol>
-                      </div>
-                      <p class="sku">{{item.sku}}</p>
-                    </div>
-                    <div class="price-box">
-                      <p class="price">￥{{item.singlePrice}}</p>
-                      <p class="quantity" v-show="!editable">x{{item.count}}</p>
-                    </div>
-                  </div>
-                </div>
-                <div class="delete" :class="{'show': editable}">删除</div>
+    <div v-show="cartItems.length" @click="documentTap">
+      <scroll ref="cartList" class="shopcart-content">
+        <div>
+          <split></split>
+          <div class="cart-group border-bottom-1px">
+            <div class="head">
+              <div class="left">
+                <checkbox v-model="allChecked" @input="checkedAllItems"></checkbox>
+                <span class="title">鲸选</span>
               </div>
-            </checkbox-group>
+              <div class="right">
+                <span class="operate" @click="edit">{{operateText}}</span>
+              </div>
+            </div>
+            <transition-group class="list" name="list" tag="div">
+              <checkbox-group v-model="checkboxModel" v-for="(item, index) in cartItems" :key="item.id">
+                <div class="item-container"
+                     ref="singleItem"
+                     @touchstart.prevent="itemTouchStart($event, index)"
+                     @touchmove.prevent="itemTouchMove($event, index)"
+                     @touchend="itemTouchEnd($event, index)"
+                >
+                  <div class="item">
+                    <checkbox :label="item.id"></checkbox>
+                    <div class="content">
+                      <div class="img">
+                        <img :src="item.imgUrl">
+                      </div>
+                      <div class="text-box">
+                        <div class="name-box">
+                          <p class="name" v-show="!editable">{{item.name}}</p>
+                          <div class="cartcontrol-wrapper" v-show="editable">
+                            <cartcontrol :good="item" :indexNum="index" @change="changeNum"></cartcontrol>
+                          </div>
+                          <p class="sku">{{item.sku}}</p>
+                        </div>
+                        <div class="price-box">
+                          <p class="price">￥{{item.singlePrice}}</p>
+                          <p class="quantity" v-show="!editable">x{{item.count}}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="delete" ref="deleteBtn" :class="{'show': editable}" @click.stop="deleteOne(item)">删除</div>
+                </div>
+              </checkbox-group>
+            </transition-group>
           </div>
         </div>
-      </div>
-      <p>选择的数组：{{this.checkboxModel}}</p>
-    </scroll>
-    <div class="cart-bottom">
-      <div class="left border-top-1px">
-        <div class="checkbox-wrapper">
-          <div class="checkbox-container">
-            <checkbox v-model="allChecked" @input="checkedAllItems"></checkbox>
+      </scroll>
+      <div class="cart-bottom">
+        <div class="left border-top-1px">
+          <div class="checkbox-wrapper">
+            <div class="checkbox-container">
+              <checkbox v-model="allChecked" @input="checkedAllItems"></checkbox>
+            </div>
+            <span class="title">全选</span>
           </div>
-          <span class="title">全选</span>
+          <div class="total-amount">
+            <p class="red">合计：￥{{totalPrice}}</p>
+            <p>{{deliveryDesc}}</p>
+          </div>
         </div>
-        <div class="total-amount">
-          <p class="red">合计：￥{{totalPrice}}</p>
-          <p>{{deliveryDesc}}</p>
-        </div>
+        <div class="submit-btn" :class="{'pay': this.checkboxModel.length > 0}" @click="pay" v-show="!editable">结算</div>
+        <div class="delete-all-btn" v-show="editable" @click="showConfirm">删除</div>
       </div>
-      <div class="submit-btn" :class="{'pay': this.checkboxModel.length > 0}" @click="pay">结算</div>
     </div>
+    <div class="cart-empty" v-show="!cartItems.length">
+      <p class="title">购物车快饿瘪了 T.T</p>
+      <p class="sub-title">快给我挑点宝贝</p>
+      <router-link to="/" class="border-btn">去逛逛</router-link>
+    </div>
+    <confirm ref="confirm" text="是否清空购物车" confirmBtnText="清空" @confirm="confirmClear"></confirm>
   </div>
 </template>
 
@@ -67,17 +82,22 @@
   import Scroll from 'base/scroll/scroll'
   import Checkbox from 'base/checkbox/checkbox'
   import CheckboxGroup from 'base/checkbox-group/checkbox-group'
+  import Confirm from 'base/confirm/confirm'
+  import {prefixStyle} from 'common/js/dom'
+  const transform = prefixStyle('transform')
+  const transitionDuration = prefixStyle('transitionDuration')
   export default {
     data() {
       return {
         allChecked: false,
+        notSwipe: true,
         cartItems: [{
           id: '1',
           name: '百草味多味花生210g 休闲零食炒货特产花生豆小吃',
           sku: '500g',
           singlePrice: '9.00',
           count: 10,
-          stock: 4,
+          stock: 10,
           imgUrl: 'http://img.alicdn.com/bao/uploaded/i2/725677994/TB1Gk0xehHI8KJjy1zbXXaxdpXa_!!0-item_pic.jpg_220x10000Q75s50.jpg_.webp'
         }, {
           id: '2',
@@ -100,6 +120,9 @@
         checkboxModel: ['1', '2'],
         editable: false
       }
+    },
+    created () {
+      this.touch = {}
     },
     computed: {
       operateText() {
@@ -143,11 +166,73 @@
       edit() {
         this.editable = !this.editable
       },
-      increaseNum(value, index) {
+      changeNum(value, index) {
         this.$set(this.cartItems[index], 'count', value)
       },
-      decreaseNum(value, index) {
-        this.$set(this.cartItems[index], 'count', value)
+      showConfirm() {
+        this.$refs.confirm.show()
+      },
+      deleteOne(item) {
+        var index = this.cartItems.findIndex((el) => {
+          return el.id === item.id
+        })
+        this.cartItems.splice(index, 1)
+      },
+      confirmClear() {
+        this.cartItems = []
+        this.editable = false
+      },
+      itemTouchStart(e, index) {
+        this.touch.initiated = true
+        const touch = e.touches[0]
+        this.touch.startX = touch.pageX
+        this.touch.startY = touch.pageY
+      },
+      itemTouchMove(e, index) {
+        if (!this.touch.initiated) {
+          return false
+        }
+        const touch = e.touches[0]
+        const deltaX = touch.pageX - this.touch.startX
+        const deltaY = touch.pageY - this.touch.startY
+        if (Math.abs(deltaY) > Math.abs(deltaX)) {
+          return false
+        }
+        const distance = this.$refs.deleteBtn[index].clientWidth
+        const left = this.notSwipe ? 0 : -distance
+        const offsetWidth = Math.min(0, Math.max(-distance, left + deltaX))
+        this.touch.percent = Math.abs(offsetWidth / distance)
+        this.$refs.singleItem[index].style[transform] = `translate3d(${offsetWidth}px, 0, 0)`
+        this.$refs.singleItem[index].style[transitionDuration] = 0
+      },
+      itemTouchEnd(e, index) {
+        let offsetWidth
+        const distance = this.$refs.deleteBtn[index].clientWidth
+        if (this.notSwipe) {
+          if (this.touch.percent > 0.3) {
+            offsetWidth = -distance
+            this.notSwipe = false
+          } else {
+            offsetWidth = 0
+          }
+        } else {
+          if (this.touch.percent < 0.7) {
+            offsetWidth = 0
+            this.notSwipe = true
+          } else {
+            offsetWidth = -distance
+          }
+        }
+        const time = 300
+        this.$refs.singleItem[index].style[transform] = `translate3d(${offsetWidth}px, 0, 0)`
+        this.$refs.singleItem[index].style[transitionDuration] = `${time}`
+      },
+      documentTap() {
+        const time = 300
+        this.$refs.singleItem.forEach((el) => {
+          el.style[transform] = `translate3d(0px, 0, 0)`
+          el.style[transitionDuration] = `${time}`
+        })
       }
     },
     watch: {
@@ -167,7 +252,8 @@
       Split,
       Scroll,
       Checkbox,
-      CheckboxGroup
+      CheckboxGroup,
+      Confirm
     }
   }
 </script>
@@ -210,57 +296,65 @@
               color $color-text-n
         .list
           overflow hidden
-          .item
-            display flex
-            align-items center
-            background $color-background
-            margin-bottom 10px
+          .checkbox-group
+            height 112px
+            &.list-enter-active, &.list-leave-active
+              transition: all 0.1s
+            &.list-enter, &.list-leave-to
+              height 0
+          .item-container
             position relative
-            .checkbox
-              padding-left 15px
-              margin-right 5px
-            .content
+            margin-bottom 10px
+            transform: translateX(0px)
+            .item
               display flex
               align-items center
-              padding: 6px 15px 6px 5px
-              flex 1
-              .img
-                display block
-                width 90px
-                height 90px
-                flex 0 0 90px
-                margin-right 10px
-                img
-                  display block
-                  width 100%
-                  height 100%
-              .text-box
+              background $color-background
+              .checkbox
+                padding-left 15px
+                margin-right 5px
+              .content
+                display flex
+                align-items center
+                padding: 6px 15px 6px 5px
                 flex 1
-                .name-box
-                  font-size $font-size-medium
-                  color $color-text
-                  line-height 1.6
-                  .name
-                    display: -webkit-box
-                    overflow: hidden
-                    text-overflow: ellipsis
-                    -webkit-box-orient: vertical
-                    -webkit-line-clamp: 2
-                  .sku
-                    margin-top 3px
-                    color $color-text-n
-                    font-size $font-size-small
-                  .cartcontrol-wrapper
-                    padding-bottom 15px
-                .price-box
-                  display flex
-                  align-items center
-                  justify-content space-between
-                  font-size $font-size-medium
-                  color $color-text-l
-                  margin-top 9px
-                  .price
-                    color $color-theme
+                .img
+                  display block
+                  width 90px
+                  height 90px
+                  flex 0 0 90px
+                  margin-right 10px
+                  img
+                    display block
+                    width 100%
+                    height 100%
+                .text-box
+                  flex 1
+                  .name-box
+                    font-size $font-size-medium
+                    color $color-text
+                    line-height 1.6
+                    .name
+                      display: -webkit-box
+                      overflow: hidden
+                      text-overflow: ellipsis
+                      -webkit-box-orient: vertical
+                      -webkit-line-clamp: 2
+                    .sku
+                      margin-top 3px
+                      color $color-text-n
+                      font-size $font-size-small
+                    .cartcontrol-wrapper
+                      padding-bottom 15px
+                  .price-box
+                    display flex
+                    align-items center
+                    justify-content space-between
+                    font-size $font-size-medium
+                    color $color-text-l
+                    margin-top 9px
+                    .price
+                      color $color-theme
             .delete
               position: absolute
               top: 0
@@ -318,5 +412,32 @@
         line-height 50px
         &.pay
           background $color-theme
-
+      .delete-all-btn
+        width 110px
+        background $color-theme
+        color #fff
+        text-align center
+        line-height 50px
+    .cart-empty
+      margin-top: 75px
+      .title
+        font-size: 16px
+        color: #666
+        text-align: center
+        margin-bottom: 14px
+      .sub-title
+        font-size: 13px
+        color: #999
+        text-align: center
+        margin-bottom: 30px
+      .border-btn
+        border: 1px solid $color-theme
+        color: #f8484a
+        font-size: 14px
+        border-radius: 3px
+        padding: 5px 20px
+        display: block
+        width: 90px
+        margin: 0 auto
+        box-sizing: border-box
 </style>
