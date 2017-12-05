@@ -57,7 +57,7 @@
                 </cell-swipe>
               </div>
             </transition-group>
-            <p>{{checkboxModel}}</p>
+            <!--<p>{{checkboxModel}}</p>-->
           </div>
         </div>
       </scroll>
@@ -192,6 +192,9 @@
         })
         if (modelIndex > -1) {
           this.checkboxModel.splice(modelIndex, 1)
+        }
+        if (this.checkboxModel.length === this.cartItems.length) {
+          this.allChecked = true
         }
       },
       collect(item) {
