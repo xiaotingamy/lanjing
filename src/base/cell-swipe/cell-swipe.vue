@@ -5,8 +5,6 @@
     @touchmove.native="onDrag"
     @touchend.native="endDrag"
     class="cell-swipe"
-    :to="to"
-    :is-link="isLink"
     ref="cell">
     <div
       slot="right"
@@ -47,10 +45,8 @@
       Clickoutside
     },
     props: {
-      to: String,
       left: Array,
-      right: Array,
-      isLink: Boolean
+      right: Array
     },
     data() {
       return {

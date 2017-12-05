@@ -15,46 +15,49 @@
               </div>
             </div>
             <transition-group class="list" name="list" tag="div">
-              <checkbox-group v-model="checkboxModel" v-for="(item, index) in cartItems" :key="item.id">
-                <cell-swipe :is-link="isLink" :right="[{
+              <div class="group" v-for="(item, index) in cartItems" :key="item.id">
+                <cell-swipe :right="[{
                     content: '<p>移入<br>收藏夹</p>',
-                    style: {background: '#cccccc', color: '#fff', height: '112px'},
+                    style: {background: '#cccccc', color: '#fff', height: '102px'},
                     handler: function() {
                       collect(item)
                     }
                   }, {
                     content: '删除',
-                    style: {background: '#ff5467', color: '#fff', height: '112px'},
+                    style: {background: '#ff5467', color: '#fff', height: '102px'},
                     handler: function() {
                       deleteOne(item)
                     }
                   }]"
                 >
-                  <div class="item">
-                    <checkbox :label="item.id"></checkbox>
-                    <div class="content">
-                      <div class="img">
-                        <img :src="item.imgUrl">
-                      </div>
-                      <div class="text-box">
-                        <div class="name-box">
-                          <p class="name" v-show="!editable">{{item.name}}</p>
-                          <div class="cartcontrol-wrapper" v-show="editable">
-                            <cartcontrol :good="item" :indexNum="index" @change="changeNum"></cartcontrol>
-                          </div>
-                          <p class="sku">{{item.sku}}</p>
+                  <checkbox-group v-model="checkboxModel">
+                    <div class="item">
+                      <checkbox :label="item.id"></checkbox>
+                      <div class="content">
+                        <div class="img">
+                          <img :src="item.imgUrl">
                         </div>
-                        <div class="price-box">
-                          <p class="price">￥{{item.singlePrice}}</p>
-                          <p class="quantity" v-show="!editable">x{{item.count}}</p>
+                        <div class="text-box">
+                          <div class="name-box">
+                            <p class="name" v-show="!editable">{{item.name}}</p>
+                            <div class="cartcontrol-wrapper" v-show="editable">
+                              <cartcontrol :good="item" :indexNum="index" @change="changeNum"></cartcontrol>
+                            </div>
+                            <p class="sku">{{item.sku}}</p>
+                          </div>
+                          <div class="price-box">
+                            <p class="price">￥{{item.singlePrice}}</p>
+                            <p class="quantity" v-show="!editable">x{{item.count}}</p>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                  <div class="delete" ref="deleteBtn" :class="{'show': editable}" @click.stop="deleteOne(item)">删除</div>
+                    <div class="delete" ref="deleteBtn" :class="{'show': editable}" @click.stop="deleteOne(item)">删除</div>
+                  </checkbox-group>
                 </cell-swipe>
-              </checkbox-group>
+              </div>
             </transition-group>
+            <p>{{checkboxModel}}</p>
           </div>
         </div>
       </scroll>
@@ -184,6 +187,12 @@
           return el.id === item.id
         })
         this.cartItems.splice(index, 1)
+        var modelIndex = this.checkboxModel.findIndex((i) => {
+          return i === item.id
+        })
+        if (modelIndex > -1) {
+          this.checkboxModel.splice(modelIndex, 1)
+        }
       },
       collect(item) {
         alert('收藏了这个商品，耶~')
@@ -191,6 +200,7 @@
       confirmClear() {
         this.cartItems = []
         this.editable = false
+        this.checkboxModel = []
       }
     },
     watch: {
@@ -255,9 +265,9 @@
               color $color-text-n
         .list
           overflow hidden
-          .checkbox-group
-            height 112px
-            margin-bottom 10px
+          .group
+            height 102px
+            margin-bottom: 10px
             &.list-enter-active, &.list-leave-active
               transition: all 0.1s
             &.list-enter, &.list-leave-to
