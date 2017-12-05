@@ -1,6 +1,6 @@
 <template>
   <div class="shopcart-wrapper">
-    <div v-show="cartItems.length" @click="documentTap">
+    <div v-show="cartItems.length">
       <scroll ref="cartList" class="shopcart-content">
         <div>
           <split></split>
@@ -16,11 +16,19 @@
             </div>
             <transition-group class="list" name="list" tag="div">
               <checkbox-group v-model="checkboxModel" v-for="(item, index) in cartItems" :key="item.id">
-                <div class="item-container"
-                     ref="singleItem"
-                     @touchstart.prevent="itemTouchStart($event, index)"
-                     @touchmove.prevent="itemTouchMove($event, index)"
-                     @touchend="itemTouchEnd($event, index)"
+                <cell-swipe :is-link="isLink" :right="[{
+                    content: '<p>移入<br>收藏夹</p>',
+                    style: {background: '#cccccc', color: '#fff', height: '112px'},
+                    handler: function() {
+                      collect(item)
+                    }
+                  }, {
+                    content: '删除',
+                    style: {background: '#ff5467', color: '#fff', height: '112px'},
+                    handler: function() {
+                      deleteOne(item)
+                    }
+                  }]"
                 >
                   <div class="item">
                     <checkbox :label="item.id"></checkbox>
@@ -44,7 +52,7 @@
                     </div>
                   </div>
                   <div class="delete" ref="deleteBtn" :class="{'show': editable}" @click.stop="deleteOne(item)">删除</div>
-                </div>
+                </cell-swipe>
               </checkbox-group>
             </transition-group>
           </div>
@@ -83,14 +91,13 @@
   import Checkbox from 'base/checkbox/checkbox'
   import CheckboxGroup from 'base/checkbox-group/checkbox-group'
   import Confirm from 'base/confirm/confirm'
-  import {prefixStyle} from 'common/js/dom'
-  const transform = prefixStyle('transform')
-  const transitionDuration = prefixStyle('transitionDuration')
+  import CellSwipe from 'base/cell-swipe/cell-swipe'
   export default {
     data() {
       return {
         allChecked: false,
         notSwipe: true,
+        isLink: false,
         cartItems: [{
           id: '1',
           name: '百草味多味花生210g 休闲零食炒货特产花生豆小吃',
@@ -178,61 +185,12 @@
         })
         this.cartItems.splice(index, 1)
       },
+      collect(item) {
+        alert('收藏了这个商品，耶~')
+      },
       confirmClear() {
         this.cartItems = []
         this.editable = false
-      },
-      itemTouchStart(e, index) {
-        this.touch.initiated = true
-        const touch = e.touches[0]
-        this.touch.startX = touch.pageX
-        this.touch.startY = touch.pageY
-      },
-      itemTouchMove(e, index) {
-        if (!this.touch.initiated) {
-          return false
-        }
-        const touch = e.touches[0]
-        const deltaX = touch.pageX - this.touch.startX
-        const deltaY = touch.pageY - this.touch.startY
-        if (Math.abs(deltaY) > Math.abs(deltaX)) {
-          return false
-        }
-        const distance = this.$refs.deleteBtn[index].clientWidth
-        const left = this.notSwipe ? 0 : -distance
-        const offsetWidth = Math.min(0, Math.max(-distance, left + deltaX))
-        this.touch.percent = Math.abs(offsetWidth / distance)
-        this.$refs.singleItem[index].style[transform] = `translate3d(${offsetWidth}px, 0, 0)`
-        this.$refs.singleItem[index].style[transitionDuration] = 0
-      },
-      itemTouchEnd(e, index) {
-        let offsetWidth
-        const distance = this.$refs.deleteBtn[index].clientWidth
-        if (this.notSwipe) {
-          if (this.touch.percent > 0.3) {
-            offsetWidth = -distance
-            this.notSwipe = false
-          } else {
-            offsetWidth = 0
-          }
-        } else {
-          if (this.touch.percent < 0.7) {
-            offsetWidth = 0
-            this.notSwipe = true
-          } else {
-            offsetWidth = -distance
-          }
-        }
-        const time = 300
-        this.$refs.singleItem[index].style[transform] = `translate3d(${offsetWidth}px, 0, 0)`
-        this.$refs.singleItem[index].style[transitionDuration] = `${time}`
-      },
-      documentTap() {
-        const time = 300
-        this.$refs.singleItem.forEach((el) => {
-          el.style[transform] = `translate3d(0px, 0, 0)`
-          el.style[transitionDuration] = `${time}`
-        })
       }
     },
     watch: {
@@ -253,7 +211,8 @@
       Scroll,
       Checkbox,
       CheckboxGroup,
-      Confirm
+      Confirm,
+      CellSwipe
     }
   }
 </script>
@@ -298,79 +257,77 @@
           overflow hidden
           .checkbox-group
             height 112px
+            margin-bottom 10px
             &.list-enter-active, &.list-leave-active
               transition: all 0.1s
             &.list-enter, &.list-leave-to
               height 0
-          .item-container
+          .item
+            display flex
+            align-items center
+            background $color-background
             position relative
-            margin-bottom 10px
-            transform: translateX(0px)
-            .item
+            .checkbox
+              padding-left 15px
+              margin-right 5px
+            .content
               display flex
               align-items center
-              background $color-background
-              .checkbox
-                padding-left 15px
-                margin-right 5px
-              .content
-                display flex
-                align-items center
-                padding: 6px 15px 6px 5px
-                flex 1
-                .img
+              padding: 6px 15px 6px 5px
+              flex 1
+              .img
+                display block
+                width 90px
+                height 90px
+                flex 0 0 90px
+                margin-right 10px
+                img
                   display block
-                  width 90px
-                  height 90px
-                  flex 0 0 90px
-                  margin-right 10px
-                  img
-                    display block
-                    width 100%
-                    height 100%
-                .text-box
-                  flex 1
-                  .name-box
-                    font-size $font-size-medium
-                    color $color-text
-                    line-height 1.6
-                    .name
-                      display: -webkit-box
-                      overflow: hidden
-                      text-overflow: ellipsis
-                      -webkit-box-orient: vertical
-                      -webkit-line-clamp: 2
-                    .sku
-                      margin-top 3px
-                      color $color-text-n
-                      font-size $font-size-small
-                    .cartcontrol-wrapper
-                      padding-bottom 15px
-                  .price-box
-                    display flex
-                    align-items center
-                    justify-content space-between
-                    font-size $font-size-medium
-                    color $color-text-l
-                    margin-top 9px
-                    .price
-                      color $color-theme
-            .delete
-              position: absolute
-              top: 0
-              right: -60px
-              background: #f8484a
-              color: #fff
-              width: 60px
-              height: 100%
-              display: flex
-              align-items: center
-              justify-content: center
-              font-size: $font-size-medium
-              transition: all 0.2s
-              &.show
-                transform:translate(-60px, 0)
-                z-index: 1
+                  width 100%
+                  height 100%
+              .text-box
+                flex 1
+                .name-box
+                  font-size $font-size-medium
+                  color $color-text
+                  line-height 1.6
+                  .name
+                    display: -webkit-box
+                    overflow: hidden
+                    text-overflow: ellipsis
+                    -webkit-box-orient: vertical
+                    -webkit-line-clamp: 2
+                  .sku
+                    margin-top 3px
+                    color $color-text-n
+                    font-size $font-size-small
+                  .cartcontrol-wrapper
+                    padding-bottom 15px
+                .price-box
+                  display flex
+                  align-items center
+                  justify-content space-between
+                  font-size $font-size-medium
+                  color $color-text-l
+                  margin-top 9px
+                  .price
+                    color $color-theme
+          .delete
+            position: absolute
+            top: 0
+            right: -60px
+            background: #ff5467
+            color: #fff
+            width: 60px
+            height: 100%
+            display: flex
+            align-items: center
+            justify-content: center
+            font-size: $font-size-medium
+            transition: all 0.2s
+            &.show
+              transform:translate(-60px, 0)
+              z-index: 1
     .cart-bottom
       position fixed
       bottom 49px
