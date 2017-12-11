@@ -16,7 +16,7 @@
             </div>
             <transition-group class="list" name="list" tag="div">
               <div class="group" v-for="(item, index) in cartItems" :key="item.id">
-                <cell-swipe :right="[{
+                <cell-swipe :is-link="isLink" :right="[{
                     content: '<p>移入<br>收藏夹</p>',
                     style: {background: '#cccccc', color: '#fff', height: '102px'},
                     handler: function() {
@@ -196,6 +196,7 @@
         if (this.checkboxModel.length === this.cartItems.length) {
           this.allChecked = true
         }
+        this.$refs.cartList.refresh()
       },
       collect(item) {
         alert('收藏了这个商品，耶~')

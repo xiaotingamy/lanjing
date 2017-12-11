@@ -1,10 +1,12 @@
 <template>
   <cell v-clickoutside:touchstart="swipeMove"
-    @click.native="swipeMove()"
+    @click.native="swipeMove"
     @touchstart.native="startDrag"
     @touchmove.native="onDrag"
     @touchend.native="endDrag"
     class="cell-swipe"
+    :to="to"
+    :is-link="isLink"
     ref="cell">
     <div
       slot="right"
@@ -46,7 +48,9 @@
     },
     props: {
       left: Array,
-      right: Array
+      right: Array,
+      to: String,
+      isLink: Boolean
     },
     data() {
       return {
@@ -101,6 +105,7 @@
             return
           }
           this.swipeMove(0)
+          // 执行一次
           once(this.wrap, 'webkitTransitionEnd', _ => {
             this.wrap.style.webkitTransform = ''
             this.rightWrapElm.style.webkitTransform = this.rightDefaultTransform

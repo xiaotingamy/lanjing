@@ -4,6 +4,7 @@ import Shopcart from 'components/shopcart/shopcart'
 import Search from 'components/search/search'
 import Login from 'components/login/login'
 import Reg from 'components/reg/reg'
+import Detail from 'components/good/detail/detail'
 export default [
   {
     path: '/',
@@ -35,5 +36,9 @@ export default [
   {
     path: '/search',
     component: Search
+  },
+  {
+    path: '/good/:id',
+    component: Detail
   }
 ]

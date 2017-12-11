@@ -1,13 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-// import routes from './routes'
+import routes from './routes'
 import store from '../store'
-import UserCenter from 'components/user-center/user-center'
-import Homepage from 'components/homepage/homepage'
-import Shopcart from 'components/shopcart/shopcart'
-import Search from 'components/search/search'
-import Login from 'components/login/login'
-import Reg from 'components/reg/reg'
 
 Vue.use(Router)
 
@@ -23,39 +17,7 @@ const scrollBehavior = (to, from, savedPosition) => {
 const router = new Router({
   mode: 'history',
   scrollBehavior,
-  routes: [
-    {
-      path: '/',
-      redirect: '/homepage'
-    },
-    {
-      path: '/homepage',
-      component: Homepage
-    },
-    {
-      path: '/cart',
-      component: Shopcart
-    },
-    {
-      path: '/user',
-      component: UserCenter,
-      meta: {
-        requiresAuth: true
-      }
-    },
-    {
-      path: '/login',
-      component: Login
-    },
-    {
-      path: '/reg',
-      component: Reg
-    },
-    {
-      path: '/search',
-      component: Search
-    }
-  ]
+  routes
 })
 
 // 路由钩子

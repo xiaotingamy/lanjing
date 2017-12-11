@@ -86,6 +86,7 @@ export const off = (function() {
   }
 })()
 
+// 让传入的函数只执行一次
 export const once = function(el, event, fn) {
   var listener = function() {
     if (fn) {
