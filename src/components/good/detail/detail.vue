@@ -37,37 +37,43 @@
             </ul>
           </div>
           <split></split>
-          <div class="cell-link border-bottom-1px">
+          <div class="cell-link border-bottom-1px" @click="showSku">
             <div class="text">选择规格</div>
             <div class="arrow"><span class="lnr lnr-chevron-right"></span></div>
           </div>
           <split></split>
+          <div class="content">
+            <div class="header">
+              商品详情
+            </div>
+            <div class="desc">
+              我是正文描述...
+            </div>
+          </div>
         </div>
       </scroll>
       <div class="good-detail-footer">
         <div class="footer-box border-top-1px">
-          <div class="left-items">
+          <div class="left">
             <div class="item border-right">
               <p class="lnr lnr-home"></p>
               <p class="text">首页</p>
             </div>
             <div class="item border-right">
-              <div class="icon">
-                <img src="../images/icon_kefu.png" alt="">
-              </div>
+              <p class="lnr lnr-phone-handset"></p>
               <p class="text">客服</p>
             </div>
             <div class="item">
-              <div class="icon">
-                <img src="../images/icon_cart.png" alt="">
-                <span class="weui-badge weui-badge_dot" style="position: absolute;top: 0;right: 2px;"></span>
-              </div>
-              <p class="weui-tabbar__label">购物车</p>
+              <p class="lnr lnr-cart"></p>
+              <p class="text">购物车</p>
             </div>
           </div>
-          <div class="buy" :class="{'active': buyActive}">{{buyDesc}}</div>
+          <div class="add-cart" @click="showSku">加入购物车</div>
+          <div class="buy-btn" @click="tiao">立即购买</div>
         </div>
       </div>
+      <sku ref="sku"></sku>
+      <router-view></router-view>
     </div>
   </transition>
 </template>
@@ -75,6 +81,7 @@
 <script type="text/ecmascript-6">
   import Scroll from 'base/scroll/scroll'
   import Slider from 'base/slider/slider'
+  import Sku from 'components/sku/sku'
   import Split from 'components/split/split'
 //  import {getGoodDetail} from 'api/good'
   import {ERR_OK} from 'api/config'
@@ -120,12 +127,20 @@
             this.$refs.scroll.refresh()
           }, 20)
         }
+      },
+      showSku() {
+        this.$refs.sku.show()
+      },
+      tiao() {
+        let id = this.$route.params.id
+        this.$router.push({ path: `/good/${id}/buy` })
       }
     },
     components: {
       Split,
       Scroll,
-      Slider
+      Slider,
+      Sku
     }
   }
 </script>
@@ -135,7 +150,7 @@
   @import "~common/stylus/variable"
   .good
     position: fixed
-    z-index: 100
+    z-index: 1
     top: 0
     left: 0
     bottom: 0
@@ -244,7 +259,17 @@
             .lnr
               font-size 14px
               color #666
-    .product-detail-footer
+        .content
+          background $color-background-w
+          .header
+            font-size $font-size-medium
+            padding 15px
+            color #313131
+          .desc
+            font-size $font-size-small
+            padding-bottom 15px
+            
+    .good-detail-footer
       position absolute
       bottom 0
       left 0
@@ -253,28 +278,46 @@
       background $color-background-w
       .footer-box
         display flex
-        justify-content space-between
-        align-items center
-        padding 0 15px
         height 100%
-        border-top-1px($color-border)
-        .icon-calculate
-          flex 0 0 30px
-          margin-right 15px
-          width 30px
-          height 30px
-          bg-image('calculate')
-          background-size 30px
-        .buy
+        .left
           flex 1
-          height 40px
-          text-align center
-          font-size 15px
-          line-height 40px
-          border-radius 4px
-          color $color-background-w
-          background #ddd
-          &.active
-            color $color-background-w
-            background $color-theme
+          display flex
+          align-items center
+          font-size $font-size-small
+          height 55px
+          .item
+            display flex
+            align-items center
+            justify-content center
+            flex-direction column
+            position: relative
+            flex: 1
+            color: #999
+            text-align: center
+            height 100%
+            &.border-right
+              border-right 1px solid $color-border
+            .lnr
+              font-size $font-size-large
+            .text
+              line-height 1
+              padding-top 5px  
+        .add-cart
+          flex 1
+          background #f85
+          color #ffffff
+          width: 100%
+          height: 55px
+          line-height: 55px
+          text-align: center
+          font-size $font-size-medium-x
+        .buy-btn
+          flex 1
+          background #ff4444
+          color #ffffff
+          width: 100%
+          height: 55px
+          line-height: 55px
+          text-align: center
+          font-size $font-size-medium-x
 </style>

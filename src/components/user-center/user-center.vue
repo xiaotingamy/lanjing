@@ -2,77 +2,70 @@
   <scroll ref="scroll" class="user-center">
     <div class="user-center-content">
       <div class="top-box border-bottom-1px">
-        <div class="operate">
-          <div class="lnr lnr-menu-circle"></div>
-          <div class="message">
-            <div class="lnr lnr-bubble"></div>
-            <span class="dot"></span>
+        <div class="user-avatar">
+          <img src="http://q.qlogo.cn/qqapp/101330628/DB1BD8C2CD3E2EB9DF05BD790F4A1BDF/100" />
+        </div>
+        <p class="user-name">mumy</p>
+      </div>
+      <split></split>
+      <div class="bind-remark border-bottom-1px">
+        <div class="text-box">
+          <p class="lnr lnr-smartphone"></p>
+          <p class="text">找不到订单或优惠券？绑定手机号试试</p>
+        </div>
+        <div class="operate-btn">立即绑定</div>
+      </div>
+      <split></split>
+      <div class="md-cell border-bottom-1px">
+        <div class="title border-bottom-1px">
+          <p>我的订单</p>
+          <div class="right">
+            <span>查看订单</span>
+            <span class="lnr lnr-chevron-right"></span>
           </div>
         </div>
-        <div class="yesterday-income">
-          <div class="title">
-            <span>昨日收益(元)</span>
-            <span class="lnr lnr-question-circle"></span>
-          </div>
-          <div class="text">
-            30.81
-          </div>
-        </div>
-        <div class="data-item">
-          <div class="item">
-            <p class="title">总资产(元)</p>
-            <p class="text">10064.12</p>
-          </div>
-          <div class="item">
-            <p class="title">累计投资(元)</p>
-            <p class="text">20816.48</p>
-          </div>
-          <div class="item">
-            <p class="title">累计收益(元)</p>
-            <p class="text">135.28</p>
+        <div class="bd">
+          <div class="state-list">
+            <div class="state-item">
+              <p class="icon icon-topay"></p>
+              <p class="text">待付款</p>
+            </div>
+            <div class="state-item">
+              <p class="icon icon-delivery"></p>
+              <p class="text">待发货</p>
+            </div>
+            <div class="state-item">
+              <p class="icon icon-getpackage"></p>
+              <p class="text">待收货</p>
+            </div>
+            <div class="state-item">
+              <p class="icon icon-finish"></p>
+              <p class="text">已完成</p>
+            </div>
           </div>
         </div>
       </div>
       <split></split>
-      <div class="remain border-bottom-1px">
-        <p class="remain-amount">余额(元): <span>1303.36</span></p>
-        <div class="operate-box">
-          <div class="btn mr">
-            <span class="lnr lnr-plus-circle"></span>
-            <span>充值</span>
-          </div>
-          <div class="btn">
-            <span class="lnr lnr-circle-minus"></span>
-            <span>提现</span>
-          </div>
+      <div class="list-link border-bottom-1px">
+        <h4>购物车</h4>
+        <div class="right">
+          <span class="quantity">8</span>
         </div>
       </div>
       <split></split>
-      <ul class="list-link">
-        <li class="border-bottom-1px">
-          <h4><span class="lnr lnr-earth"></span><span>我的定期</span></h4>
+      <div class="list-link border-bottom-1px">
+        <h4>我的优惠券</h4>
+        <div class="right">
           <span class="lnr lnr-chevron-right"></span>
-        </li>
-        <li class="border-bottom-1px">
-          <h4><span class="lnr lnr-earth"></span><span>我的卡券</span></h4>
-          <span class="lnr lnr-chevron-right"></span>
-        </li>
-        <li class="border-bottom-1px">
-          <h4><span class="lnr lnr-mic"></span><span>我的银行卡</span></h4>
-          <span class="lnr lnr-chevron-right"></span>
-        </li>
-      </ul>
+        </div>
+      </div>
       <split></split>
-      <ul class="list-link">
-        <li class="border-bottom-1px">
-          <h4><span class="lnr lnr-mic"></span><span>邀请好友</span></h4>
+      <div class="list-link border-bottom-1px">
+        <h4>地址管理</h4>
+        <div class="right">
           <span class="lnr lnr-chevron-right"></span>
-        </li>
-        <li class="border-bottom-1px">
-          <h4><span class="lnr lnr-mic"></span><span>活动中心</span></h4>
-          <span class="lnr lnr-chevron-right"></span>
-        </li>
-      </ul>
+        </div>
+      </div>
       <div class="contact-box">
         <p class="tel">客服热线：400-875-9966</p>
         <p class="time">9:00~18:00（工作日）</p>
@@ -104,125 +97,117 @@
     overflow hidden
     .user-center-content
       .top-box
-        padding-bottom 20px
+        position: relative
+        display: flex
+        flex-direction: column
+        align-items: center
+        padding: 25px 0
+        box-sizing: border-box
+        border-bottom-1px($color-border)
+        background $white
+        .user-avatar
+          width: 90px
+          height: 90px
+          border-radius: 90px
+          box-shadow: 0 0 10px rgba(0,0,0,0.6)
+          margin-bottom: 12px
+          img
+            width: 90px
+            height: 90px
+            border-radius: 90px
+        .user-name
+          font-size $font-size-medium
+      .bind-remark
+        position: relative
+        background: $white
+        padding: 15px
+        font-size: $font-size-medium
+        display: flex
+        justify-content: space-between
+        margin-bottom: 10px
+        border-bottom-1px($color-border)
+        .text-box
+          flex 1
+          display flex
+          align-items center
+          .lnr
+            font-size $font-size-medium
+            color #999999
+            margin-right 5px
+          .text
+            font-size $font-size-medium
+        .operate-btn
+          flex 0 0 60px
+          border: 1px solid $color-theme
+          color: $color-theme
+          font-size: $font-size-small
+          border-radius: 3px
+          padding: 5px 0;
+          text-align center
+      .md-cell
+        position relative
+        border-bottom-1px($color-border)
+        padding 0 15px
+        background $white
+        .title
+          display flex
+          justify-content space-between
+          align-items center
+          font-size $font-size-medium
+          border-bottom-1px($color-border)
+          height 45px
+          .right
+            color #999999
+            .lnr
+              font-size $font-size-small
+        .bd
+          padding 15px 0 20px
+          .state-list
+            display flex
+            align-items center 
+            justify-content space-around
+            .state-item
+              flex 1
+              display flex
+              align-items center
+              flex-direction column
+              font-size $font-size-small
+              .text
+                margin-top 5px
+              .icon
+                width 30px
+                height 30px
+                background-size 30px
+                &.icon-topay
+                  bg-image('icon-topay')
+                &.icon-delivery
+                  bg-image('icon-delivery')
+                &.icon-getpackage
+                  bg-image('icon-getpackage')
+                &.icon-finish
+                  bg-image('icon-finish')
+      .list-link
+        display flex
+        justify-content space-between
+        align-items center
+        padding 0 15px
+        height 45px
         background $color-background-w
         border-bottom-1px($color-border)
-        .operate
-          position absolute
-          top 0
-          left 0
-          width 100%
-          height 45px
-          display flex
-          justify-content space-between
-          align-items center
-          padding 0 15px
-          box-sizing border-box
-          .lnr
-            font-size $font-size-large-x
-            color $color-text
+        h4
+          flex 1
+          font-size $font-size-medium
+        .right
+          span
             display block
-          .message
-            position relative
-            .dot
-              display block
-              position absolute
-              top 2px
-              right 0
-              width 6px
-              height 6px
-              background $color-theme
-              border-radius 50%
-        .yesterday-income
-          padding-top 37px
-          .title
-            width 100px
             font-size $font-size-medium
-            color $color-text
-            margin-left 50%
-            transform translate(-42%, 0)
-            .lnr-question-circle
-              color $color-theme
-              margin-left 2px
-          .text
-            text-align center
-            font-size $font-size-large-xxx
-            color $color-theme
-            margin-top 12px
-            margin-bottom 24px
-        .data-item
-          font-size 0
-          width 100%
-          .item
-            display inline-block
-            vertical-align middle
-            width 33%
-            padding 3px 0
-            text-align center
-            border-right 1px solid $color-border
-            &:last-child
-              border 0
-            .title
-              font-size $font-size-small
-              color $color-text-l
-            .text
-              font-size $font-size-medium
-              color $color-text
-              padding-top 10px
-
-
-
-      .remain
-        padding 0 0 0 15px
-        height 50px
-        background $color-background-w
-        display flex
-        align-items center
-        justify-content space-between
-        .remain-amount
-          font-size 15px
-          color $color-text
-        .operate-box
-          flex 0 0 167px
-          width 167px
-          display flex
-          .btn
-            font-size 0
-            color $color-link
-            height 50px
-            line-height 50px
-            padding-right 20px
-            &.mr
-              margin-right 20px
-            span
-              display inline-block
-              vertical-align middle
-              font-size $font-size-medium
-              &.lnr
-                font-size $font-size-large
-                margin-right 3px
-
-      .list-link
-        li
-          display flex
-          justify-content space-between
-          align-items center
-          padding 0 15px
-          height 55px
-          background $color-background-w
-          border-bottom-1px($color-border)
-          h4
-            display flex
-            align-items center
-            span
-              display block
-              font-size 15px
-              &.lnr
-                font-size $font-size-large
-                color $color-theme
-                margin-right 10px
-          .lnr-chevron-right
-            color #ccc
+            &.lnr-chevron-right
+              color #ccc
+            &.quantity
+              padding: 0 8px
+              border-radius: 6px
+              background: #98a1aa
+            color: #fff
       .contact-box
         padding 12px 0
         text-align center

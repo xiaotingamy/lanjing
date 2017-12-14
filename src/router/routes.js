@@ -5,6 +5,7 @@ import Search from 'components/search/search'
 import Login from 'components/login/login'
 import Reg from 'components/reg/reg'
 import Detail from 'components/good/detail/detail'
+import Buy from 'components/good/buy/buy'
 export default [
   {
     path: '/',
@@ -39,6 +40,10 @@ export default [
   },
   {
     path: '/good/:id',
-    component: Detail
+    component: Detail,
+    children: [{
+      path: 'buy',
+      component: Buy
+    }]
   }
 ]

@@ -17,7 +17,12 @@
     props: {
       good: {
         type: Object,
-        default: {}
+        default: function() {
+          return {
+            stock: 1000,
+            count: 1
+          }
+        }
       },
       indexNum: {
         type: Number,
