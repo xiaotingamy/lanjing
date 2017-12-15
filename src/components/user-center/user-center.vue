@@ -1,77 +1,80 @@
 <template>
-  <scroll ref="scroll" class="user-center">
-    <div class="user-center-content">
-      <div class="top-box border-bottom-1px">
-        <div class="user-avatar">
-          <img src="http://q.qlogo.cn/qqapp/101330628/DB1BD8C2CD3E2EB9DF05BD790F4A1BDF/100" />
+  <div>
+    <scroll ref="scroll" class="user-center">
+      <div class="user-center-content">
+        <div class="top-box border-bottom-1px">
+          <div class="user-avatar">
+            <img src="http://q.qlogo.cn/qqapp/101330628/DB1BD8C2CD3E2EB9DF05BD790F4A1BDF/100" />
+          </div>
+          <p class="user-name">mumy</p>
         </div>
-        <p class="user-name">mumy</p>
-      </div>
-      <split></split>
-      <div class="bind-remark border-bottom-1px">
-        <div class="text-box">
-          <p class="lnr lnr-smartphone"></p>
-          <p class="text">找不到订单或优惠券？绑定手机号试试</p>
+        <split></split>
+        <div class="bind-remark border-bottom-1px">
+          <div class="text-box">
+            <p class="lnr lnr-smartphone"></p>
+            <p class="text">找不到订单或优惠券？绑定手机号试试</p>
+          </div>
+          <div class="operate-btn">立即绑定</div>
         </div>
-        <div class="operate-btn">立即绑定</div>
-      </div>
-      <split></split>
-      <div class="md-cell border-bottom-1px">
-        <div class="title border-bottom-1px">
-          <p>我的订单</p>
+        <split></split>
+        <div class="md-cell border-bottom-1px">
+          <div class="title border-bottom-1px">
+            <p>我的订单</p>
+            <div class="right">
+              <span>查看订单</span>
+              <span class="lnr lnr-chevron-right"></span>
+            </div>
+          </div>
+          <div class="bd">
+            <div class="state-list">
+              <div class="state-item">
+                <p class="icon icon-topay"></p>
+                <p class="text">待付款</p>
+              </div>
+              <div class="state-item">
+                <p class="icon icon-delivery"></p>
+                <p class="text">待发货</p>
+              </div>
+              <div class="state-item">
+                <p class="icon icon-getpackage"></p>
+                <p class="text">待收货</p>
+              </div>
+              <div class="state-item">
+                <p class="icon icon-finish"></p>
+                <p class="text">已完成</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <split></split>
+        <div class="list-link border-bottom-1px">
+          <h4>购物车</h4>
           <div class="right">
-            <span>查看订单</span>
+            <span class="quantity">8</span>
+          </div>
+        </div>
+        <split></split>
+        <div class="list-link border-bottom-1px">
+          <h4>我的优惠券</h4>
+          <div class="right">
             <span class="lnr lnr-chevron-right"></span>
           </div>
         </div>
-        <div class="bd">
-          <div class="state-list">
-            <div class="state-item">
-              <p class="icon icon-topay"></p>
-              <p class="text">待付款</p>
-            </div>
-            <div class="state-item">
-              <p class="icon icon-delivery"></p>
-              <p class="text">待发货</p>
-            </div>
-            <div class="state-item">
-              <p class="icon icon-getpackage"></p>
-              <p class="text">待收货</p>
-            </div>
-            <div class="state-item">
-              <p class="icon icon-finish"></p>
-              <p class="text">已完成</p>
-            </div>
+        <split></split>
+        <div class="list-link border-bottom-1px">
+          <h4>地址管理</h4>
+          <div class="right">
+            <span class="lnr lnr-chevron-right"></span>
           </div>
         </div>
-      </div>
-      <split></split>
-      <div class="list-link border-bottom-1px">
-        <h4>购物车</h4>
-        <div class="right">
-          <span class="quantity">8</span>
+        <div class="contact-box">
+          <p class="tel">客服热线：400-875-9966</p>
+          <p class="time">9:00~18:00（工作日）</p>
         </div>
       </div>
-      <split></split>
-      <div class="list-link border-bottom-1px">
-        <h4>我的优惠券</h4>
-        <div class="right">
-          <span class="lnr lnr-chevron-right"></span>
-        </div>
-      </div>
-      <split></split>
-      <div class="list-link border-bottom-1px">
-        <h4>地址管理</h4>
-        <div class="right">
-          <span class="lnr lnr-chevron-right"></span>
-        </div>
-      </div>
-      <div class="contact-box">
-        <p class="tel">客服热线：400-875-9966</p>
-        <p class="time">9:00~18:00（工作日）</p>
-      </div>
-    </div>
-  </scroll>
+    </scroll>
+    <router-view></router-view>
+  </div>
 </template>
 
 <script type="text/ecmascript-6">
@@ -88,7 +91,6 @@
 <style scoped lang="stylus" rel="stylesheet/stylus">
   @import "~common/stylus/mixin"
   @import "~common/stylus/variable"
-
   .user-center
     position absolute
     top 0

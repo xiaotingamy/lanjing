@@ -1,7 +1,7 @@
 <template>
   <div class="m-footer">
     <ul class="border-top-1px">
-      <router-link tag="li" to="/homepage">
+      <router-link tag="li" to="/index/recommend">
         <span class="lnr lnr-diamond"></span>
         <span class="text">首页</span>
       </router-link>

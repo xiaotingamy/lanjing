@@ -17,7 +17,4 @@
 </script>
 
 <style scoped lang="stylus" rel="stylesheet/stylus">
-  @import "~common/stylus/variable"
-  .text
-    color $color-text
 </style>

@@ -1,13 +1,15 @@
 <template>
   <div class="header">
-    <div class="inner border-bottom-1px">
+    <div class="inner">
       <p class="title">{{title}}</p>
-      <div class="back" @click.stop="linkTo(backUrl)">
+      <div class="back" @click.stop="linkTo(backUrl)" v-show="backable">
         <div class="extend">
           <span class="lnr lnr-chevron-left"></span>
         </div>
       </div>
-      <div class="operate"></div>
+      <div class="operate">
+        <slot name="operate"></slot>
+      </div>
     </div>
   </div>
 </template>
@@ -17,11 +19,15 @@
     props: {
       title: {
         type: String,
-        default: '微银理财'
+        default: '鲸选商城'
       },
       backUrl: {
         type: String,
         default: ''
+      },
+      backable: {
+        type: Boolean,
+        default: false
       }
     },
     methods: {
@@ -48,12 +54,11 @@
     left 0
     width 100%
     height 44px
-    background: $color-background-w
+    background: #fafafa
     z-index 101
     .inner
       position relative
       height 100%
-      border-bottom-1px(#ccc)
       .title
         text-align center
         color: $color-text
@@ -68,4 +73,9 @@
             color $color-text
             font-size $font-size-large
             line-height: 44px
+      .operate
+        position absolute
+        right 15px
+        top 0
+        line-height 44px
 </style>

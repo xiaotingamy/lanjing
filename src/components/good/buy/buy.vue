@@ -33,21 +33,7 @@
             </div>
             <ul class="good-list">
               <li>
-                <div class="good-item">
-                  <div class="img">
-                    <img src="http://img.alicdn.com/bao/uploaded/i2/725677994/TB1Gk0xehHI8KJjy1zbXXaxdpXa_!!0-item_pic.jpg_220x10000Q75s50.jpg_.webp"/>
-                  </div>
-                  <div class="text-box">
-                    <div class="name-box">
-                      <p class="name">良品铺子零食大礼包组合一整箱好吃的混合装吃货膨化食品小吃批发</p>
-                      <p class="price">￥123.00</p>
-                    </div>
-                    <div class="sku-box">
-                      <p class="sku">黑色</p>
-                      <p class="quantity">X1</p>
-                    </div>
-                  </div>
-                </div>
+                <good-item></good-item>
               </li>
             </ul>
             <div class="extra-box">
@@ -103,10 +89,12 @@
 <script type="text/ecmascript-6">
   import Scroll from 'base/scroll/scroll'
   import Split from 'components/split/split'
+  import GoodItem from 'components/good-item/good-item'
   export default {
     components: {
       Scroll,
-      Split
+      Split,
+      GoodItem
     }
   }
 </script>

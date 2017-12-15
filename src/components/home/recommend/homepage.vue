@@ -5,7 +5,7 @@
         <div v-if="banners.length" class="slider-wrapper">
           <div class="slider-content">
             <slider ref="slider">
-              <div v-for="item in banners">
+              <div v-for="(item, index) in banners" :key="index">
                 <a :href="item.remark">
                   <img class="needsclick" :src="item.imageUrl" @load="loadImage">
                 </a>
@@ -89,7 +89,7 @@
   @import "~common/stylus/variable"
   .homepage-wrapper
     position absolute
-    top 0
+    top 74px
     bottom 49px
     width 100%
     .homepage-content
