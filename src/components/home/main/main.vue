@@ -1,11 +1,11 @@
 <template>
   <div>
     <m-header>
-      <div slot="operate">
-        <div class="search">
+      <!-- <div slot="operate">
+        <router-link class="search" to="/search" tag="div">
           <span class="lnr lnr-magnifier"></span>
-        </div>
-      </div>
+        </router-link>
+      </div> -->
     </m-header>
     <div class="tab-wrapper">
       <tab></tab>

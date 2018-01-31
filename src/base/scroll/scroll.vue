@@ -6,6 +6,8 @@
 
 <script type="text/ecmascript-6">
   import BScroll from 'better-scroll'
+  const DIRECTION_H = 'horizontal'
+  const DIRECTION_V = 'vertical'
   export default {
     props: {
       probeType: {
@@ -13,10 +15,6 @@
         default: 1
       },
       click: {
-        type: Boolean,
-        default: true
-      },
-      scrollX: {
         type: Boolean,
         default: false
       },
@@ -32,10 +30,6 @@
         type: Boolean,
         default: false
       },
-      pulldown: {
-        type: Boolean,
-        default: false
-      },
       beforeScroll: {
         type: Boolean,
         default: false
@@ -43,19 +37,16 @@
       refreshDelay: {
         type: Number,
         default: 20
+      },
+      direction: {
+        type: String,
+        default: DIRECTION_V
       }
     },
     mounted() {
       setTimeout(() => {
         this._initScroll()
       }, 20)
-    },
-    watch: {
-      data() {
-        setTimeout(() => {
-          this.refresh()
-        }, this.refreshDelay)
-      }
     },
     methods: {
       _initScroll() {
@@ -64,25 +55,18 @@
         }
         this.scroll = new BScroll(this.$refs.wrapper, {
           probeType: this.probeType,
-          click: this.click
+          click: this.click,
+          eventPassthrough: this.direction === DIRECTION_V ? DIRECTION_H : DIRECTION_V
         })
         if (this.listenScroll) {
-          let me = this
           this.scroll.on('scroll', (pos) => {
-            me.$emit('scroll', pos)
+            this.$emit('scroll', pos)
           })
         }
         if (this.pullup) {
           this.scroll.on('scrollEnd', () => {
             if (this.scroll.y <= (this.scroll.maxScrollY + 50)) {
-              this.$emit('scrollEnd')
-            }
-          })
-        }
-        if (this.pulldown) {
-          this.scroll.on('scroll', (pos) => {
-            if (pos.y > 50) {
-              this.$emit('pulldown')
+              this.$emit('scrollToEnd')
             }
           })
         }
@@ -92,11 +76,11 @@
           })
         }
       },
-      enable() {
-        this.scroll && this.scroll.enable()
-      },
       disable() {
         this.scroll && this.scroll.disable()
+      },
+      enable() {
+        this.scroll && this.scroll.enable()
       },
       refresh() {
         this.scroll && this.scroll.refresh()
@@ -107,10 +91,16 @@
       scrollToElement() {
         this.scroll && this.scroll.scrollToElement.apply(this.scroll, arguments)
       }
+    },
+    watch: {
+      data() {
+        setTimeout(() => {
+          this.refresh()
+        }, this.refreshDelay)
+      }
     }
   }
 </script>
 
 <style scoped lang="stylus" rel="stylesheet/stylus">
-
 </style>

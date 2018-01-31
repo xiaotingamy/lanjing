@@ -1,24 +1,22 @@
 <template>
-  <transition name="slide">
+  <!-- <transition name="slide"> -->
     <div class="good">
-      <scroll ref="scroll" class="good-detail-wrapper">
+      <scroll ref="scroll" class="good-detail-wrapper" :data="gallery">
         <div class="good-detail-content">
-          <div v-if="goodImages.length" class="slider-wrapper">
+          <div v-if="gallery.length" class="slider-wrapper">
             <div class="slider-content">
               <slider ref="slider">
-                <div v-for="item in goodImages" :key="item.remark">
-                  <a :href="item.remark">
-                    <img class="needsclick" :src="item.imageUrl" @load="loadImage">
-                  </a>
+                <div v-for="item in gallery" :key="item.remark">
+                  <img :src="item.img_url" @load="loadImage">
                 </div>
               </slider>
             </div>
           </div>
           <div class="base-info border-bottom-1px">
             <div class="top-box border-bottom-1px">
-              <p class="name">良品铺子零食大礼包组合一整箱好吃的混合装吃货膨化食品小吃批发</p>
-              <p class="price">￥123.00 - 152.22</p>
-              <p class="origin-price">233.00 - 523.00</p>
+              <p class="name">{{info.name}}</p>
+              <p class="price">￥{{info.retail_price}}</p>
+              <!-- <p class="origin-price">233.00 - 523.00</p> -->
             </div>
             <div class="cell-text">
               <p>运费：免运费</p>
@@ -26,14 +24,14 @@
               <p>销量：98</p>
             </div>
           </div>
-          <div class="tags-wrapper border-bottom-1px">
+          <div class="tags-wrapper border-bottom-1px" v-if="brand.name">
             <ul>
               <li>
-                <span>预售</span>
+                <span>{{brand.name}}</span>
               </li>
-              <li>
+              <!-- <li>
                 <span>双11</span>
-              </li>
+              </li> -->
             </ul>
           </div>
           <split></split>
@@ -46,8 +44,13 @@
             <div class="header">
               商品详情
             </div>
-            <div class="desc">
-              我是正文描述...
+            <div class="attribute" v-if="attribute.length">
+              <div class="item" v-for="item in attribute" :key="item.name">
+                <div class="left">{{item.name}}</div>
+                <div class="right"><div class="con">{{item.value}}</div></div>
+              </div>
+            </div>
+            <div class="desc" v-if="info.goods_desc" v-html="info.goods_desc">
             </div>
           </div>
         </div>
@@ -55,27 +58,26 @@
       <div class="good-detail-footer">
         <div class="footer-box border-top-1px">
           <div class="left">
-            <div class="item border-right">
+            <router-link tag="div" to="/" class="item border-right">
               <p class="lnr lnr-home"></p>
               <p class="text">首页</p>
-            </div>
-            <div class="item border-right">
-              <p class="lnr lnr-phone-handset"></p>
-              <p class="text">客服</p>
-            </div>
-            <div class="item">
+            </router-link>
+            <router-link tag="div" to="/cart" class="item">
               <p class="lnr lnr-cart"></p>
               <p class="text">购物车</p>
-            </div>
+            </router-link>
           </div>
           <div class="add-cart" @click="showSku">加入购物车</div>
-          <div class="buy-btn" @click="tiao">立即购买</div>
+          <div class="buy-btn" @click="showSku">立即购买</div>
         </div>
       </div>
-      <sku ref="sku"></sku>
+      <sku ref="sku"
+            @addtocart="addCart"
+            @gotobuy="goBuy"
+            @changeSku="handleSku"></sku>
       <router-view></router-view>
     </div>
-  </transition>
+  <!-- </transition> -->
 </template>
 
 <script type="text/ecmascript-6">
@@ -83,40 +85,48 @@
   import Slider from 'base/slider/slider'
   import Sku from 'components/sku/sku'
   import Split from 'components/split/split'
-//  import {getGoodDetail} from 'api/good'
+  import {getGoodDetail, getSkuInfo} from 'api/good'
   import {ERR_OK} from 'api/config'
-  import {getBanners} from 'api/homepage'
+  import {mapMutations, mapActions} from 'vuex'
+
   export default {
     data() {
       return {
-        good: {},
-        goodImages: []
+        gallery: [], // 图片
+        info: {}, // 基本信息
+        brand: {}, // 标签
+        attribute: [] // 商品参数
       }
     },
     created() {
-//      this._getGoodDetail()
-      this._getBanners()
-      console.log(this.$route.params.id)
+      this._getGoodDetail()
+      this._getSkuInfo()
     },
     activated() {
       setTimeout(() => {
         this.$refs.slider && this.$refs.slider.refresh()
       }, 20)
     },
-    computed: {
-    },
     methods: {
-//      _getGoodDetail() {
-//        getGoodDetail(this.$route.params.id).then((res) => {
-//          if (res.code === ERR_OK) {
-//            this.good = res.data
-//          }
-//        })
-//      }
-      _getBanners() {
-        getBanners().then((res) => {
-          if (res.code === ERR_OK) {
-            this.goodImages = res.data
+      _getGoodDetail() {
+        getGoodDetail(this.$route.params.id).then((res) => {
+          if (res.errno === ERR_OK) {
+            this.gallery = res.data.gallery
+            this.info = res.data.info
+            this.brand = res.data.brand
+            this.attribute = res.data.attribute
+          }
+        })
+      },
+      _getSkuInfo() {
+        getSkuInfo().then((res) => {
+          if (res.errno === ERR_OK) {
+            this.skuList = res.data.skuList
+            this.setSkuList(this.skuList)
+            this.setTotalStock(res.data.totalStock)
+            this.setPrice(res.data.initial_price)
+            this.setGoodName(res.data.name)
+            this.setMajorImage(res.data.initial_img_url)
           }
         })
       },
@@ -131,11 +141,36 @@
       showSku() {
         this.$refs.sku.show()
       },
-      tiao() {
+      addCart() {
+        alert('添加到购物车')
+      },
+      goBuy() {
         let id = this.$route.params.id
         this.$router.push({ path: `/good/${id}/buy` })
-      }
+      },
+      handleSku(item, index) {
+        this.selectSku({
+          list: this.skuList,
+          index
+        })
+      },
+      ...mapMutations({
+        setSkuList: 'SET_SKULIST',
+        setGoodName: 'SET_GOODNAME',
+        setMajorImage: 'SET_MAJORIMAGE',
+        setTotalStock: 'SET_TOTALSTOCK',
+        setPrice: 'SET_PRICE'
+      }),
+      ...mapActions([
+        'selectSku'
+      ])
     },
+    // watch: {
+    //   '$route' (to, from) {
+    //     // 对路由变化作出响应...
+    //     this._getGoodDetail()
+    //   }
+    // },
     components: {
       Split,
       Scroll,
@@ -150,7 +185,7 @@
   @import "~common/stylus/variable"
   .good
     position: fixed
-    z-index: 1
+    z-index: 2
     top: 0
     left: 0
     bottom: 0
@@ -265,10 +300,36 @@
             font-size $font-size-medium
             padding 15px
             color #313131
+          .attribute
+            padding 0 15px 15px
+            .item
+              zoom: 1
+              font-size: 12px
+              line-height: 22px
+              padding: 5px 15px 5px 0
+              background-image: linear-gradient(to right,#e6e6e6 33%,rgba(255,255,255,0) 0)
+              background-position: top
+              background-size: 6px 1px
+              background-repeat: repeat-x
+              &:after
+                display: block
+                clear: both
+                visibility: hidden
+                height: 0
+                overflow: hidden
+                content: "."
+              .left
+                float left
+                width: 73px
+                position: relative
+                color: #999
+              .right
+                margin-left 84px
           .desc
-            font-size $font-size-small
-            padding-bottom 15px
-            
+            width 100%
+            img 
+              width: 100%
+              display: block
     .good-detail-footer
       position absolute
       bottom 0
@@ -304,8 +365,8 @@
               padding-top 5px  
         .add-cart
           flex 1
-          background #f85
-          color #ffffff
+          background #F8E4A5
+          color $color-text
           width: 100%
           height: 55px
           line-height: 55px
@@ -313,7 +374,7 @@
           font-size $font-size-medium-x
         .buy-btn
           flex 1
-          background #ff4444
+          background #F8B530
           color #ffffff
           width: 100%
           height: 55px

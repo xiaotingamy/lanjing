@@ -36,6 +36,14 @@ export default [
     }]
   },
   {
+    path: '/good/:id',
+    component: Detail,
+    children: [{
+      path: 'buy',
+      component: Buy
+    }]
+  },
+  {
     path: '/cart',
     component: Shopcart
   },
@@ -65,13 +73,5 @@ export default [
   {
     path: '/search',
     component: Search
-  },
-  {
-    path: '/good/:id',
-    component: Detail,
-    children: [{
-      path: 'buy',
-      component: Buy
-    }]
   }
 ]

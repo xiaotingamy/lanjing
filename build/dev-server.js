@@ -23,102 +23,18 @@ const autoOpenBrowser = !!config.dev.autoOpenBrowser
 // https://github.com/chimurai/http-proxy-middleware
 const proxyTable = config.dev.proxyTable
 
+var skuinfodata = require('../skuinfo.json')
 const app = express()
-const compiler = webpack(webpackConfig)
-
 var apiRoutes = express.Router()
-//data mock
-// var productListData = require('../productList.json')
-// var products = productListData.products
-
-var baseURL = 'https://www.jiayuanbank.com/rest'
-const bodyParser = require('body-parser')
-app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({ extended: true }))
-
-apiRoutes.get('/banners', function (req, res) {
-  const url = 'https://www.jiayuanbank.com/banners'
-  axios.get(url).then((response) => {
-    res.json(response.data)
-  }).catch((e) => {
-    console.log(e)
+apiRoutes.get('/skuinfo', function(req, res){
+  res.json({
+    errno: 0,
+    data: skuinfodata
   })
 })
+app.use('/api', apiRoutes)
 
-// apiRoutes.get('/product/list', function (req, res) {
-//   const url = baseURL + '/product/list'
-//   axios.get(url).then((response) => {
-//     res.json(response.data)
-//   }).catch((e) => {
-//     console.log(e)
-//   })
-// })
-
-// apiRoutes.get('/product/detail/:id', function (req, res) {
-//   var product = products.filter(product => product.id == req.params.id)
-//   res.json({
-//     code: 0,
-//     data: product[0]
-//   })
-//   // const url = baseURL + '/product/detail/' + req.params.id
-//   // axios.get(url).then((response) => {
-//   //   res.json(response.data)
-//   // }).catch((e) => {
-//   //   console.log(e)
-//   // })
-// })
-
-// apiRoutes.get('/product/trade/detail', function (req, res) {
-//   const url =  baseURL + '/product/trade/detail'
-//   axios.get(url, {
-//     params: req.query
-//   }).then((response) => {
-//     res.json(response.data)
-//   }).catch((e) => {
-//     console.log(e)
-//   })
-// })
-//
-// apiRoutes.get('/piggybank/trade/detail', function (req, res) {
-//   const url =  baseURL + '/piggybank/trade/detail'
-//   axios.get(url, {
-//     params: req.query
-//   }).then((response) => {
-//     res.json(response.data)
-//   }).catch((e) => {
-//     console.log(e)
-//   })
-// })
-
-apiRoutes.post('/login', function (req, res) {
-  const url = baseURL + '/login'
-  axios.post(url, qs.stringify(req.body)).then((response) => {
-    res.json(response.data)
-  }).catch((e) => {
-    console.log(e)
-  })
-})
-
-apiRoutes.post('/authorize', function (req, res) {
-  const url = baseURL + '/authorize'
-  axios.post(url, qs.stringify(req.body)).then((response) => {
-    res.json(response.data)
-  }).catch((e) => {
-    console.log(e)
-  })
-})
-
-apiRoutes.post('/access/token', function (req, res) {
-  const url = baseURL + '/access/token'
-  axios.post(url, qs.stringify(req.body)).then((response) => {
-    res.json(response.data)
-  }).catch((e) => {
-    console.log(e)
-  })
-})
-
-app.use('/rest', apiRoutes)
-
+const compiler = webpack(webpackConfig)
 const devMiddleware = require('webpack-dev-middleware')(compiler, {
   publicPath: webpackConfig.output.publicPath,
   quiet: true

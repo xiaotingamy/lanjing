@@ -1,13 +1,13 @@
 <template>
   <div class="homepage-wrapper">
-    <scroll ref="scroll" class="homepage-content">
+    <scroll ref="scroll" class="homepage-content" :data="banner">
       <div>
-        <div v-if="banners.length" class="slider-wrapper">
+        <div v-if="banner.length" class="slider-wrapper">
           <div class="slider-content">
             <slider ref="slider">
-              <div v-for="(item, index) in banners" :key="index">
-                <a :href="item.remark">
-                  <img class="needsclick" :src="item.imageUrl" @load="loadImage">
+              <div v-for="item in banner" :key="item.id">
+                <a :href="item.link">
+                  <img class="needsclick" :src="item.image_url" @load="loadImage">
                 </a>
               </div>
             </slider>
@@ -17,21 +17,64 @@
           <div class="searchbar-box-border">
             <div class="searchbar">
               <span class="lnr lnr-magnifier"></span>
-              <span class="text">搜索</span>
+              <span class="text">搜索商品, 共9930款好物</span>
             </div>
           </div>
         </router-link>
-        <div class="large-product-list-wrapper">
-          <product-list mold="large" :products="hotProducts"></product-list>
+        <div class="ad-container">
+          <div class="left">
+            <a href="">
+              <img src="./2-pic1.png" alt="">
+            </a>
+          </div>
+          <div class="right">
+            <div class="ad">
+              <a href="">
+                <img src="./2-pic2.png" alt="">
+              </a>
+            </div>
+            <div class="ad">
+              <a href="">
+                <img src="./2-pic3.png" alt="">
+              </a>
+            </div>
+          </div>
         </div>
-        <div class="grid-product-list-wrapper">
-          <product-list mold="grid" :products="hotProducts"></product-list>
+        <div class="recommend-floor">
+          <div class="title">
+            <h3>为你推荐</h3>
+          </div>
+          <div class="bd">
+            <good-list mold="large" :goods="hotGoods"></good-list>
+          </div>
         </div>
-        <div class="cell-product-list-wrapper">
-          <product-list mold="cell" :products="hotProducts"></product-list>
+        <div class="newgood-floor">
+          <div class="title">
+            <router-link tag="h3" to="/">周一周四 · 新品首发</router-link>
+            <span class="lnr lnr-chevron-right-circle"></span>
+          </div>
+          <div class="bd">
+            <good-list mold="grid" :goods="newGoods"></good-list>
+          </div>
         </div>
+        <div class="good-grid" v-for="item in floorGoods" :key="item.id">
+          <div class="floor-name">
+            {{item.name}}
+          </div>
+          <div class="floor-b">
+            <good-list mold="grid" :moreTag="item.name" :goods="item.goodsList"></good-list>
+          </div>
+        </div>
+
+        <!-- <div class="grid-good-list-wrapper">
+          <good-list mold="grid" :goods="hotGoods"></good-list>
+        </div> -->
+        <!-- <div class="cell-good-list-wrapper">
+          <good-list mold="cell" :goods="hotGoods"></good-list>
+        </div> -->
       </div>
     </scroll>
+    <!-- <router-view :key="key"></router-view> -->
   </div>
 </template>
 
@@ -39,19 +82,22 @@
   import Scroll from 'base/scroll/scroll'
   import Slider from 'base/slider/slider'
   import Loading from 'base/loading/loading'
-  import ProductList from 'base/product-list/product-list'
-  import {getBanners} from 'api/homepage'
+  import GoodList from 'base/good-list/good-list'
+  import {getIndexData} from 'api/homepage'
   import {ERR_OK} from 'api/config'
 
   export default {
     data() {
       return {
-        banners: [],
-        hotProducts: []
+        banner: [],
+        hotGoods: [],
+        newGoods: [],
+        floorGoods: [],
+        moreTag: ''
       }
     },
     created() {
-      this._getBanners()
+      this._getIndexData()
     },
     activated() {
       setTimeout(() => {
@@ -59,11 +105,15 @@
       }, 20)
     },
     methods: {
-      _getBanners() {
-        getBanners().then((res) => {
-          if (res.code === ERR_OK) {
-            this.banners = res.data
+      _getIndexData() {
+        getIndexData().then((res) => {
+          if (res.errno === ERR_OK) {
+            this.banner = res.data.banner
+            this.hotGoods = res.data.hotGoodsList.slice(2)
+            this.newGoods = res.data.newGoodsList
+            this.floorGoods = res.data.categoryList
           }
+          // console.log(res.data)
         })
       },
       loadImage() {
@@ -75,11 +125,16 @@
         }
       }
     },
+    // computed: {
+    //   key() {
+    //     return this.$route.name !== undefined ? this.$route.name + new Date() : this.$route + new Date()
+    //   }
+    // },
     components: {
       Scroll,
       Slider,
       Loading,
-      ProductList
+      GoodList
     }
   }
 </script>
@@ -92,6 +147,7 @@
     top 74px
     bottom 49px
     width 100%
+    // background $white
     .homepage-content
       height 100%
       overflow hidden
@@ -99,7 +155,7 @@
         position: relative
         width: 100%
         height: 0
-        padding-top: 150px
+        padding-top: 170px
         overflow: hidden
         .slider-content
           position: absolute
@@ -107,16 +163,58 @@
           left: 0
           width: 100%
           height: 100%
-      .large-product-list-wrapper
-        padding 15px 15px 0
-        overflow hidden
-      .grid-product-list-wrapper
-        padding 0 15px
-      .cell-product-list-wrapper
-        padding 0 15px
+      .ad-container
+        padding 15px
+        display flex
+        justify-content space-between
+        .left
+          width 168px
+          height 168px
+          flex 0 0 168px
+          margin-right 10px
+          img 
+            width 100%
+            height 100%
+        .right
+          flex 1
+          display flex
+          flex-direction column
+          justify-content space-between
+          .ad
+            height 79px
+            img 
+              width 100%
+              height 100%
+          
+      .recommend-floor
+        padding 5px 15px 0
+        .title
+          font-size $font-size-medium-x
+          padding-bottom 20px
+          text-align center
+      .newgood-floor
+        padding 5px 15px 0
+        .title
+          display flex
+          justify-content center
+          align-items center
+          padding-bottom 20px
+          h3
+            font-size $font-size-medium-x
+            text-align center
+            margin-right 3px
+          .lnr
+            font-size $font-size-medium-x
+            color $color-text-l
+      .good-grid
+        padding 5px 15px 0
+        .floor-name
+          font-size $font-size-medium-x
+          text-align center
+          padding-bottom 20px
       .searchbar-wrapper
         background $color-background
-        padding 8px 10px
+        padding 15px 10px 8px
         display: flex
         box-sizing: border-box
         .searchbar-box-border
@@ -133,7 +231,7 @@
             transform: scale(.5)
             -webkit-transform-origin: 0 0
             transform-origin: 0 0
-            border-radius: 10px
+            border-radius: 50px
             border: 1px solid #e6e6ea
             box-sizing: border-box
             background: #fff
@@ -145,10 +243,11 @@
             width: 100%
             box-sizing: border-box
             z-index: 1
+            display flex
+            align-items center 
+            justify-content center
             .lnr
-              position: absolute;
-              left: 10px
-              top: 3px
+              display block
               line-height: 28px
               font-size $font-size-medium-x
               color $color-text-l
@@ -156,6 +255,6 @@
               display block
               font-size $font-size-medium
               color $color-text-l
-              width 100%
+              margin-left 10px
               padding 10px 0
 </style>

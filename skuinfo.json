@@ -1,0 +1,33 @@
+{
+  "name": "色织精梳AB纱格纹空调被",
+  "id": 101,
+  "initial_price": "2-29",
+  "initial_img_url": "http://yanxuan.nosdn.127.net/f7e77331229098060bbacf2fc6c1708b.jpg",
+  "skuList": [
+      {
+          "id": 1020,
+          "checked": false,
+          "value": "200g",
+          "stock": 10,
+          "price": 2,
+          "img_url": "http://yanxuan.nosdn.127.net/2720383ea168872acc8d492de9573cc6.jpg"
+      },
+      {
+        "id": 1021,
+        "checked": false,
+        "value": "300g",
+        "stock": 0,
+        "price": 15,
+        "img_url": "http://yanxuan.nosdn.127.net/45e4c14029626178419c82f2837f51ca.jpg"
+      },
+      {
+        "id": 1022,
+        "checked": false,
+        "value": "500g",
+        "stock": 15,
+        "price": 29,
+        "img_url": "http://yanxuan.nosdn.127.net/bb6c28d502704d5c1645d066f79bf61d.jpg"
+      }
+  ],
+  "totalStock": 35
+}

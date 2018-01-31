@@ -1,12 +1,12 @@
 <template>
   <div class="cartcontrol">
-    <p class="btn-minus" @click="decreaseCount" :class="{'off': innerCount <= 1}">
+    <p class="btn-minus" @click="decreaseNum" :class="{'off': inputNum <= 1}">
       <span class="btn minus"></span>
     </p>
     <p class="btn-input">
-      <input type="tel" v-model="innerCount" @blur="blurInput">
+      <input type="tel" v-model="inputNum" @blur="blurInput" maxlength="6">
     </p>
-    <p class="btn-plus" @click="increaseCount" :class="{'off': innerCount === innerStock}">
+    <p class="btn-plus" @click="increaseNum" :class="{'off': inputNum === maxNum}">
       <span class="btn plus"></span>
     </p>
   </div>
@@ -15,66 +15,71 @@
 <script type="text/ecmascript-6">
   export default {
     props: {
-      good: {
-        type: Object,
-        default: function() {
-          return {
-            stock: 1000,
-            count: 1
-          }
-        }
-      },
       indexNum: {
         type: Number,
-        require: true
+        default: -1
+      },
+      stock: {
+        type: Number,
+        default: 10000
+      },
+      defaultNum: {
+        type: [Number, String],
+        default: 1
       }
     },
     data() {
       return {
-        innerCount: 1,
-        innerStock: 1000
+        inputNum: 1,
+        maxNum: 1000
       }
     },
-    created() {
-      this.innerStock = this.good.stock
-      this.innerCount = this.good.count
-      if (this.innerCount > this.innerStock) {
-        this.innerCount = this.innerStock
-      }
+    mounted() {
+      setTimeout(() => {
+        this.inputNum = this.defaultNum
+        this.maxNum = this.stock
+        if (this.inputNum > this.maxNum) {
+          this.inputNum = this.maxNum
+        }
+      }, 20)
     },
     methods: {
-      decreaseCount() {
-        let newValue = this.innerCount
+      decreaseNum() {
+        let newValue = this.inputNum
         if (newValue > 1) {
-          this.innerCount = newValue - 1
+          this.inputNum = newValue - 1
         }
-        this.$emit('change', this.innerCount, this.indexNum)
+        this.$emit('change', this.inputNum, this.indexNum)
       },
-      increaseCount() {
-        let newValue = this.innerCount
-        if (newValue <= this.innerStock - 1) {
-          this.innerCount = Number(newValue) + 1
+      increaseNum() {
+        let newValue = this.inputNum
+        if (newValue <= this.maxNum - 1) {
+          this.inputNum = Number(newValue) + 1
         }
-        this.$emit('change', this.innerCount, this.indexNum)
+        this.$emit('change', this.inputNum, this.indexNum)
       },
       blurInput() {
-        if (this.innerCount === '') {
-          this.innerCount = 1
+        if (this.inputNum === '') {
+          this.inputNum = 1
         }
-        this.$emit('change', this.innerCount, this.indexNum)
+        this.$emit('change', parseInt(this.inputNum), this.indexNum)
       }
     },
     watch: {
-      innerCount(newCount) {
-//        this.answer = 'Waiting for you to stop typing...'
-//        this.getAnswer()
-        if (newCount > this.innerStock) {
-          this.innerCount = this.innerStock
+      inputNum(newNum) {
+        if (newNum > this.maxNum) {
+          this.inputNum = this.maxNum
         }
-        if (isNaN(newCount)) {
-          this.innerCount = 1
+        if (isNaN(newNum)) {
+          this.inputNum = 1
         }
-        this.$emit('change', this.innerCount, this.indexNum)
+        this.$emit('change', parseInt(this.inputNum), this.indexNum)
+      },
+      stock(newValue) {
+        this.maxNum = newValue
+        if (this.inputNum - newValue > 0) {
+          this.inputNum = newValue
+        }
       }
     }
   }

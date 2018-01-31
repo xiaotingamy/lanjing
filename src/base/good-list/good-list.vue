@@ -1,38 +1,31 @@
 <template>
-  <div class="product-list" :class="typeClass">
+  <div class="good-list" :class="typeClass">
     <ul>
-      <li>
-        <div class="product-item">
+      <li v-for="item in goods" :key="item.id">
+        <div class="good-item" @click="toDetail(item)">
           <div class="image-header">
-            <img class="product-image" src="">
+            <img class="good-image" :src="item.list_pic_url">
           </div>
-          <div class="product-intro">
+          <div class="good-intro">
             <p class="name">
-              良品铺子零食大礼包组合一整箱好吃的混合装吃货膨化食品小吃批发
+              {{item.name}}
             </p>
-            <div class="cell">
-              <p class="price">￥785.00</p>
-              <div class="lnr lnr-cart"></div>
+            <p class="desc" v-if="item.goods_brief">
+              {{item.goods_brief}}
+            </p>
+            <div class="cell-text">
+              <p class="price">￥{{item.retail_price}}</p>
+              <!-- <div class="lnr lnr-cart"></div> -->
             </div>
           </div>
         </div>
       </li>
-      <li>
-        <div class="product-item">
-          <div class="image-header">
-            <img class="product-image" src="">
-          </div>
-          <div class="product-intro">
-            <p class="name">
-              良品铺子零食大礼包组合一整箱好吃的混合装吃货膨化食品小吃批发
-            </p>
-            <div class="cell">
-              <p class="price">￥785.00</p>
-              <div class="lnr lnr-cart"></div>
-            </div>
-          </div>
+      <router-link v-if="moreTag" tag="li" to="/cart">
+        <div class="more">  
+          <p>更多{{moreTag}}好物</p>
+          <span class="lnr lnr-arrow-right-circle"></span>
         </div>
-      </li>
+      </router-link>
     </ul>
   </div>
 </template>
@@ -40,11 +33,15 @@
 <script type="text/ecmascript-6">
     export default {
       props: {
-        products: {
+        goods: {
           type: Array,
           default: []
         },
         mold: {
+          type: String,
+          default: ''
+        },
+        moreTag: {
           type: String,
           default: ''
         }
@@ -57,6 +54,12 @@
             'cell': this.mold === 'cell'
           }
         }
+      },
+      methods: {
+        toDetail(item) {
+          let url = `/good/${item.id}`
+          this.$router.push(url)
+        }
       }
     }
 </script>
@@ -64,12 +67,12 @@
 <style scoped lang="stylus" rel="stylesheet/stylus">
   @import "~common/stylus/mixin"
   @import "~common/stylus/variable"
-  .product-list
+  .good-list
     position: relative
     &.large
       li
         margin-bottom 15px
-        .product-item
+        .good-item
           background $color-background-w
           .image-header
             display block
@@ -77,13 +80,13 @@
             width 100%
             height 0
             padding-top 100%
-            .product-image
+            .good-image
               position absolute
               left 0
               top 0
               width 100%
               height 100%
-          .product-intro
+          .good-intro
             padding 10px
             .name
               font-size $font-size-medium
@@ -92,28 +95,47 @@
               overflow hidden
               white-space nowrap
               text-overflow ellipsis
-            .cell
+            .desc
+              font-size $font-size-small
+              color $color-text-l
+              margin-top 8px 
+            .cell-text
               display flex
               justify-content space-between
               align-items center
               margin-top 6px
               .price
-                font-size $font-size-large
-                color $color-theme
+                font-size $font-size-medium-x
+                color $color-text
+                margin-top 5px
               .lnr
                 font-size $font-size-large-x
                 color $color-theme
-
     &.grid
       ul
         display flex
         justify-content space-between
+        align-items center
         flex-wrap wrap
         li
           display block
           width 48%
           margin-bottom 15px
-          .product-item
+          .more
+            height 100%
+            display flex
+            flex-direction column
+            align-items center
+            justify-content center
+            background $white
+            padding 40px 0
+            p
+              font-size $font-size-medium-x
+            .lnr
+              font-size $font-size-large-x
+              color $color-text
+              margin-top 20px
+          .good-item
             background $color-background-w
             .image-header
               display block
@@ -121,13 +143,13 @@
               width 100%
               height 0
               padding-top 100%
-              .product-image
+              .good-image
                 position absolute
                 left 0
                 top 0
                 width 100%
                 height 100%
-            .product-intro
+            .good-intro
               padding 10px
               .name
                 font-size $font-size-small
@@ -138,24 +160,27 @@
                 text-overflow ellipsis
                 -webkit-box-orient vertical
                 -webkit-line-clamp 2
-              .cell
+              .desc
+                font-size $font-size-small
+                color $color-text-l
+                margin-top 8px 
+              .cell-text
                 display flex
                 justify-content space-between
                 align-items center
-                margin-top 15px
                 .price
-                  font-size $font-size-small
-                  color $color-theme
-                  line-height 1
-                .lnr
                   font-size $font-size-medium-x
+                  color $color-text
+                  margin-top 5px
+                .lnr
+                  font-size $font-size-large-x
                   color $color-theme
 
 
     &.cell
       li
         margin-bottom 15px
-        .product-item
+        .good-item
           position relative
           display flex
           background $color-background-w
@@ -179,10 +204,10 @@
             height 120px
             flex 0 0 120px
             z-index 1
-            .product-image
+            .good-image
               width 100%
               height 100%
-          .product-intro
+          .good-intro
             position relative
             flex 1
             padding 10px
@@ -200,17 +225,21 @@
               text-overflow ellipsis
               -webkit-box-orient vertical
               -webkit-line-clamp 2
-            .cell
+            .desc
+              font-size $font-size-small
+              color $color-text-l
+              margin-top 8px 
+            .cell-text
               display flex
               justify-content space-between
               align-items center
               margin-top 20px
               .price
-                font-size $font-size-small
-                color $color-theme
-                line-height 1
-              .lnr
                 font-size $font-size-medium-x
+                color $color-text
+                margin-top 5px
+              .lnr
+                font-size $font-size-large-x
                 color $color-theme
 
 </style>

@@ -15,6 +15,24 @@ const mutations = {
   [types.USER_REG](state, token) {
     localStorage.setItem('accessToken', token)
     state.token = token
+  },
+  [types.SET_SKULIST](state, list) {
+    state.skuList = list
+  },
+  [types.SET_GOODNAME](state, name) {
+    state.goodName = name
+  },
+  [types.SET_MAJORIMAGE](state, imgurl) {
+    state.majorImage = imgurl
+  },
+  [types.SET_TOTALSTOCK](state, stock) {
+    state.totalStock = stock
+  },
+  [types.SET_PRICE](state, price) {
+    state.price = price
+  },
+  [types.SET_CURRENT_INDEX](state, index) {
+    state.currentIndex = index
   }
 }
 

@@ -55,7 +55,7 @@
     width 100%
     height 44px
     background: #fafafa
-    z-index 101
+    z-index 1
     .inner
       position relative
       height 100%

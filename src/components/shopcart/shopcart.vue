@@ -41,7 +41,7 @@
                           <div class="name-box">
                             <p class="name" v-show="!editable">{{item.name}}</p>
                             <div class="cartcontrol-wrapper" v-show="editable">
-                              <cartcontrol :good="item" :indexNum="index" @change="changeNum"></cartcontrol>
+                              <cartcontrol :default-num="item.count" :stock="item.stock" :index-num="index" @change="changeNum"></cartcontrol>
                             </div>
                             <p class="sku">{{item.sku}}</p>
                           </div>
@@ -106,7 +106,7 @@
           name: '百草味多味花生210g 休闲零食炒货特产花生豆小吃',
           sku: '500g',
           singlePrice: '9.00',
-          count: 10,
+          count: 5,
           stock: 10,
           imgUrl: 'http://img.alicdn.com/bao/uploaded/i2/725677994/TB1Gk0xehHI8KJjy1zbXXaxdpXa_!!0-item_pic.jpg_220x10000Q75s50.jpg_.webp'
         }, {

@@ -9,43 +9,41 @@
               <div class="good border-bottom-1px">
                 <div class="image">
                   <p>
-                    <img src="http://yanxuan.nosdn.127.net/9a3b1a674b27f572b05ae4e736ef5e82.png?quality=90&thumbnail=200x200&imageView"/>
+                    <img :src="majorImage"/>
                   </p>
                 </div>
                 <div class="text">
-                  <h3 class="title">珠海长隆企鹅/横琴湾/马戏酒店度假套餐 2天1晚</h3>
-                  <p class="price">￥98</p>
+                  <h3 class="title">{{goodName}}</h3>
+                  <p class="price">￥{{price}}</p>
                 </div>
                 <div class="close" @click="hide"><span class="lnr lnr-cross-circle"></span></div>
               </div>
             </div>
-            <div class="content-box">
+            <div class="content-box" v-if="skuList">
               <div class="cell border-bottom-1px">
                 <h2>选择规格</h2>
                 <ul>
-                  <li class="sel">200g</li>
-                  <li>300g</li>
-                  <li class="disable">1000g</li>
+                  <li v-for="(item, index) in skuList" :key="item.id" :class="statusCls(item)" @click="selectItem(item, index)">{{item.value}}</li>
                 </ul>
               </div>
               <div class="cell">
                 <div class="quantity">
                   <h2>
                     <p>购买数量</p>
-                    <p class="sub">剩余123件</p>
+                    <p class="sub">剩余{{totalStock}}件</p>
                   </h2>
                   <div class="cartcontrol-wrapper">
-                    <cartcontrol></cartcontrol>
+                    <cartcontrol :stock="totalStock" :index-num="currentIndex"></cartcontrol>
                   </div>
                 </div>
               </div>
             </div>
             <div class="bottom-box">
               <div class="sku-btns">
-                <div class="btn addcart">
+                <div class="btn addcart" @click="emitAddCart">
                   加入购物车
                 </div>
-                <div class="btn gobuy">
+                <div class="btn gobuy" @click="emitGoBuy">
                   立即购买
                 </div>
               </div>
@@ -58,6 +56,7 @@
 </template>
 <script type="text/ecmascript-6">
   import Cartcontrol from 'components/cartcontrol/cartcontrol'
+  import {mapGetters} from 'vuex'
   export default {
     data() {
       return {
@@ -70,7 +69,42 @@
       },
       hide() {
         this.showFlag = false
+      },
+      emitAddCart() {
+        this.$emit('addtocart')
+      },
+      emitGoBuy() {
+        this.$emit('gotobuy')
+      },
+      statusCls(item) {
+        if (item.checked) {
+          return 'sel'
+        } else if (!item.stock) {
+          return 'disable'
+        } else {
+          return ''
+        }
+      },
+      selectItem(item, index) {
+        if (!item.stock || item.checked) {
+          return false
+        } else {
+          this.$emit('changeSku', item, index)
+        }
       }
+      // changeNum(value, index) {
+      //   // this.$set(this.cartItems[index], 'count', value)
+      // }
+    },
+    computed: {
+      ...mapGetters([
+        'skuList',
+        'goodName',
+        'totalStock',
+        'price',
+        'majorImage',
+        'currentIndex'
+      ])
     },
     components: {
       Cartcontrol
@@ -91,6 +125,8 @@
       transition all 0.3s
     &.up-enter, &.up-leave-to
       transform translate3d(0, 100%, 0)
+      .blank
+        opacity 0
     .sku-content
       display flex
       flex-direction column
@@ -98,6 +134,7 @@
       .blank
         flex 1
         width 100%
+        background rgba(0, 0, 0, .5)
       .sku-main
         width 100%
         background $color-background-w
@@ -226,7 +263,8 @@
                 line-height 42px
                 text-align center
                 &.addcart
-                  background #f85
+                  background #F8E4A5
+                  color $color-text
                 &.gobuy
-                  background #f44
+                  background #F8B530
 </style>
