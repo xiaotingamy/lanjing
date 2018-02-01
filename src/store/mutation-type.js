@@ -4,7 +4,6 @@ export const USER_SIGNOUT = 'USER_SIGNOUT'
 export const USER_REG = 'USER_REG'
 
 export const SET_SKULIST = 'SET_SKULIST'
-export const SET_GOODNAME = 'SET_GOODNAME'
 export const SET_MAJORIMAGE = 'SET_MAJORIMAGE'
 export const SET_TOTALSTOCK = 'SET_TOTALSTOCK'
 export const SET_PRICE = 'SET_PRICE'

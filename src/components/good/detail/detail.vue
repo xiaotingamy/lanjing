@@ -71,7 +71,7 @@
           <div class="buy-btn" @click="showSku">立即购买</div>
         </div>
       </div>
-      <sku ref="sku"
+      <sku ref="sku" :good-name="info.name"
             @addtocart="addCart"
             @gotobuy="goBuy"
             @changeSku="handleSku"></sku>
@@ -125,7 +125,7 @@
             this.setSkuList(this.skuList)
             this.setTotalStock(res.data.totalStock)
             this.setPrice(res.data.initial_price)
-            this.setGoodName(res.data.name)
+            // this.setGoodName(res.data.name)
             this.setMajorImage(res.data.initial_img_url)
           }
         })
@@ -141,10 +141,22 @@
       showSku() {
         this.$refs.sku.show()
       },
-      addCart() {
-        alert('添加到购物车')
+      addCart(sku, num) {
+        console.log(sku)
+        console.log(num)
+        if (!sku.id) {
+          alert('请选择规格')
+        } else {
+          alert('添加了' + num + '个，skuId为' + sku.id + '的商品到购物车')
+        }
       },
-      goBuy() {
+      goBuy(sku, num) {
+        if (!sku.id) {
+          alert('请选择规格')
+          return false
+        } else {
+          alert('选择了' + num + '个，skuId为' + sku.id + '的商品去购买，现在去购买吗？')
+        }
         let id = this.$route.params.id
         this.$router.push({ path: `/good/${id}/buy` })
       },
@@ -156,7 +168,6 @@
       },
       ...mapMutations({
         setSkuList: 'SET_SKULIST',
-        setGoodName: 'SET_GOODNAME',
         setMajorImage: 'SET_MAJORIMAGE',
         setTotalStock: 'SET_TOTALSTOCK',
         setPrice: 'SET_PRICE'
@@ -165,12 +176,6 @@
         'selectSku'
       ])
     },
-    // watch: {
-    //   '$route' (to, from) {
-    //     // 对路由变化作出响应...
-    //     this._getGoodDetail()
-    //   }
-    // },
     components: {
       Split,
       Scroll,

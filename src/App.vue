@@ -1,7 +1,7 @@
 <template>
   <div id="app" @touchmove.prevent>
     <!-- <keep-alive> -->
-      <router-view></router-view>
+    <router-view></router-view>
     <!-- </keep-alive> -->
     <m-footer></m-footer>
   </div>

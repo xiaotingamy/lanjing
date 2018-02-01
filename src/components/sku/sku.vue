@@ -33,7 +33,7 @@
                     <p class="sub">剩余{{totalStock}}件</p>
                   </h2>
                   <div class="cartcontrol-wrapper">
-                    <cartcontrol :stock="totalStock" :index-num="currentIndex"></cartcontrol>
+                    <cartcontrol :stock="totalStock" :index-num="currentIndex" @change="changeNum"></cartcontrol>
                   </div>
                 </div>
               </div>
@@ -58,9 +58,16 @@
   import Cartcontrol from 'components/cartcontrol/cartcontrol'
   import {mapGetters} from 'vuex'
   export default {
+    props: {
+      goodName: {
+        type: String,
+        default: ''
+      }
+    },
     data() {
       return {
-        showFlag: false
+        showFlag: false,
+        buyNum: 1
       }
     },
     methods: {
@@ -71,10 +78,10 @@
         this.showFlag = false
       },
       emitAddCart() {
-        this.$emit('addtocart')
+        this.$emit('addtocart', this.currentSku, this.buyNum)
       },
       emitGoBuy() {
-        this.$emit('gotobuy')
+        this.$emit('gotobuy', this.currentSku, this.buyNum)
       },
       statusCls(item) {
         if (item.checked) {
@@ -91,19 +98,21 @@
         } else {
           this.$emit('changeSku', item, index)
         }
+      },
+      changeNum(value, index) {
+        this.buyNum = value
+        // this.$emit('changeBuyNum', value, index)
       }
-      // changeNum(value, index) {
-      //   // this.$set(this.cartItems[index], 'count', value)
-      // }
     },
     computed: {
       ...mapGetters([
         'skuList',
-        'goodName',
+        // 'goodName',
         'totalStock',
         'price',
         'majorImage',
-        'currentIndex'
+        'currentIndex',
+        'currentSku'
       ])
     },
     components: {

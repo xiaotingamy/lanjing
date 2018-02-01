@@ -65,16 +65,9 @@
             <good-list mold="grid" :moreTag="item.name" :goods="item.goodsList"></good-list>
           </div>
         </div>
-
-        <!-- <div class="grid-good-list-wrapper">
-          <good-list mold="grid" :goods="hotGoods"></good-list>
-        </div> -->
-        <!-- <div class="cell-good-list-wrapper">
-          <good-list mold="cell" :goods="hotGoods"></good-list>
-        </div> -->
       </div>
     </scroll>
-    <!-- <router-view :key="key"></router-view> -->
+    <router-view :key="key"></router-view>
   </div>
 </template>
 
@@ -125,11 +118,11 @@
         }
       }
     },
-    // computed: {
-    //   key() {
-    //     return this.$route.name !== undefined ? this.$route.name + new Date() : this.$route + new Date()
-    //   }
-    // },
+    computed: {
+      key() {
+        return this.$route.name !== undefined ? this.$route.name + new Date() : this.$route + new Date()
+      }
+    },
     components: {
       Scroll,
       Slider,

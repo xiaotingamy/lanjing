@@ -23,7 +23,15 @@ export default [
     component: Main,
     children: [{
       path: 'recommend',
-      component: Recommend
+      component: Recommend,
+      children: [{
+        path: '/good/:id',
+        component: Detail,
+        children: [{
+          path: 'buy',
+          component: Buy
+        }]
+      }]
     }, {
       path: 'cate',
       component: Cate
@@ -33,14 +41,6 @@ export default [
     }, {
       path: 'seafood',
       component: Seafood
-    }]
-  },
-  {
-    path: '/good/:id',
-    component: Detail,
-    children: [{
-      path: 'buy',
-      component: Buy
     }]
   },
   {

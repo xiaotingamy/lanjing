@@ -4,7 +4,6 @@ const state = {
   productDescription: {},
   token: isLoggedIn() || null,
   skuList: [],
-  goodName: '',
   majorImage: '',
   totalStock: 0,
   price: 0,

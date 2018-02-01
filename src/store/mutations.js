@@ -22,9 +22,6 @@ const mutations = {
   [types.SET_GOODNAME](state, name) {
     state.goodName = name
   },
-  [types.SET_MAJORIMAGE](state, imgurl) {
-    state.majorImage = imgurl
-  },
   [types.SET_TOTALSTOCK](state, stock) {
     state.totalStock = stock
   },
